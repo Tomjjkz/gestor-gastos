@@ -2,8 +2,10 @@ import { useState } from 'react'
 import './App.css'
 
 function App() {
-  const agregarGasto = () => 
-    {
+  const agregarGasto = () => {
+    if (monto === "" || descripcion === "" || fecha === "") {
+      return
+    }
       const nuevoGasto =
       {
         monto: monto,
@@ -12,6 +14,10 @@ function App() {
         descripcion: descripcion,
       }
       setGastos([...gastos, nuevoGasto])
+      setMonto("")
+      setFecha("")
+      setDescripcion("")
+      setCategoria("Comida")
       console.log(nuevoGasto)
     }
   const [gastos, setGastos] = useState([])
@@ -19,10 +25,13 @@ function App() {
   const [descripcion, setDescripcion] = useState("")
   const [monto, setMonto] = useState("")
   const [categoria, setCategoria] = useState("Comida")
+  const total = gastos.reduce((acumulado, gasto) => {
+    return acumulado + Number(gasto.monto)
+  }, 0)
 
   return (
     <>
-      <form>
+      <form className='barra'>
         <input 
           type="date"
           value={fecha}
@@ -51,13 +60,16 @@ function App() {
         <button type="button" onClick={agregarGasto}>Agregar gasto</button>
       </form> 
       {gastos.map((gasto, index) => (
-        <div key={index}>
-          <p>{gasto.fecha}</p>
+        <div key={index} className='gasto'>
+          <p>{gasto.fecha.split("-")[2]}/{gasto.fecha.split("-")[1]}/{gasto.fecha.split("-")[0]}</p>
           <p>{gasto.categoria}</p>
           <p>{gasto.descripcion}</p>
-          <p>{gasto.monto}</p>
+          <p className='monto'>-${gasto.monto}</p>
         </div>
         ))}
+        <div className='resumen'>
+        <p className='total'>Total gastado: -${total}</p>
+        </div>
       <div className="ticks"></div>
       <div className="ticks"></div>
       <section id="spacer"></section>
