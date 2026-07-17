@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap');
 
 :root {
+  --grid-gastos: 40px 110px minmax(0, 1.2fr) minmax(0, 2fr) minmax(0, 1fr) 40px;
   --bg: #0F172A;
   --panel: #1E293B;
   --accent: #3B82F6;
@@ -9,6 +10,10 @@
   --amarillo: #FACC15;
   --texto: #F8FAFC;
   --texto-muted: #94A3B8;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
@@ -20,6 +25,7 @@ body {
 
 .barra {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   background: var(--panel);
   padding: 16px 20px;
@@ -27,38 +33,29 @@ body {
 }
 
 .gasto {
+  display: grid;
+  grid-template-columns: var(--grid-gastos);
+  align-items: center;
+  gap: 12px;
   background: var(--panel);
   color: var(--texto);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 10px;
   padding: 14px 20px;
-  margin: 12px auto;
-  max-width: 500px;
+  margin: 8px 0;
   width: 100%;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 2px 8px rgb(0, 0, 0, 0.3);
-  transition: transform 0.2s ease;
+  transition: background 0.15s ease;
 }
 
 .gasto:hover {
-  transform: translateY(-3px);
-}
-
-.gasto p {
-  flex: 1;
-  text-align: center;
-  padding: 0 16px;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.gasto p:last-child {
-  border-right: none;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .monto {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
   color: var(--rojo);
+  text-align: right;
 }
 
 .barra input,
@@ -110,4 +107,175 @@ body {
   max-width: 500px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   text-align: center;
+}
+
+.btn-editar {
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 12px auto;
+  display: block;
+  transition: border-color 0.2s ease;
+}
+
+.btn-editar:hover {
+  border-color: var(--accent);
+}
+
+.btn-borrar {
+  background: var(--rojo);
+  color: var(--texto);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 0 auto 12px;
+  display: block;
+  transition: background 0.2s ease;
+}
+
+.btn-borrar:hover {
+  background: #dc2626;
+}
+
+.seccion {
+  width: 100%;
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 24px 28px;
+  background: var(--panel);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.seccion h2 {
+  color: var(--texto);
+  font-size: 16px;
+  margin: 0 0 16px;
+  text-align: left;
+}
+
+.encabezado {
+  display: grid;
+  grid-template-columns: var(--grid-gastos);
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 0 20px 12px;
+  color: var(--texto-muted);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 8px;
+}
+
+.encabezado .col-monto {
+  text-align: right;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.badge-otros {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--texto-muted);
+  font-size: 13px;
+}
+
+.celda-categoria {
+  display: flex;
+}
+
+.celda-check,
+.celda-acciones {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.gasto:hover .celda-check,
+.gasto:hover .celda-acciones {
+  opacity: 1;
+}
+
+.btn-menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 4px;
+  color: var(--texto-muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.btn-menu:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--texto);
+}
+
+.celda-acciones {
+  position: relative;
+}
+
+.menu-contextual {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  padding: 6px;
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--texto);
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.menu-item-peligro {
+  color: var(--rojo);
 }
