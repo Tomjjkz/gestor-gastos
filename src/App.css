@@ -21,7 +21,7 @@ body {
   color: var(--texto-muted);
   font-family: 'Inter', sans-serif;
   margin: 0;
-} 
+}
 
 .barra {
   display: flex;
@@ -30,32 +30,6 @@ body {
   background: var(--panel);
   padding: 16px 20px;
   align-items: center;
-}
-
-.gasto {
-  display: grid;
-  grid-template-columns: var(--grid-gastos);
-  align-items: center;
-  gap: 12px;
-  background: var(--panel);
-  color: var(--texto);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
-  padding: 14px 20px;
-  margin: 8px 0;
-  width: 100%;
-  transition: background 0.15s ease;
-}
-
-.gasto:hover {
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.monto {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-  color: var(--rojo);
-  text-align: right;
 }
 
 .barra input,
@@ -107,41 +81,6 @@ body {
   max-width: 500px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   text-align: center;
-}
-
-.btn-editar {
-  background: var(--panel);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  cursor: pointer;
-  font-size: 14px;
-  margin: 12px auto;
-  display: block;
-  transition: border-color 0.2s ease;
-}
-
-.btn-editar:hover {
-  border-color: var(--accent);
-}
-
-.btn-borrar {
-  background: var(--rojo);
-  color: var(--texto);
-  border: none;
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  margin: 0 auto 12px;
-  display: block;
-  transition: background 0.2s ease;
-}
-
-.btn-borrar:hover {
-  background: #dc2626;
 }
 
 .seccion {
@@ -206,6 +145,51 @@ body {
   display: flex;
 }
 
+/* --- Fila (colapso animado al eliminar) --- */
+
+.fila-wrapper {
+  margin: 8px 0;
+  transition: height 0.3s ease, margin-top 0.3s ease, margin-bottom 0.3s ease;
+}
+
+.fila-wrapper.saliendo {
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.gasto {
+  display: grid;
+  grid-template-columns: var(--grid-gastos);
+  align-items: center;
+  gap: 12px;
+  background: var(--panel);
+  color: var(--texto);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 14px 20px;
+  width: 100%;
+  transition: background 0.15s ease, opacity 0.3s ease, transform 0.3s ease;
+}
+
+.gasto:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.fila-wrapper.saliendo > .gasto {
+  opacity: 0;
+  transform: translateX(12px);
+  overflow: hidden;
+}
+
+.monto {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: var(--rojo);
+  text-align: right;
+}
+
+/* --- Checkbox propio (sin estilo nativo del navegador) --- */
+
 .celda-check,
 .celda-acciones {
   display: flex;
@@ -219,6 +203,42 @@ body {
 .gasto:hover .celda-acciones {
   opacity: 1;
 }
+
+.tabla-gastos.hay-seleccion .celda-check {
+  opacity: 1;
+}
+
+.celda-check input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  background: var(--bg);
+  cursor: pointer;
+  position: relative;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.celda-check input[type='checkbox']:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.celda-check input[type='checkbox']:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* --- Menú contextual (⋮) --- */
 
 .btn-menu {
   display: flex;
@@ -279,6 +299,36 @@ body {
 .menu-item-peligro {
   color: var(--rojo);
 }
+
+/* --- Botón "Eliminar seleccionados" (abajo a la derecha) --- */
+
+.acciones-tabla-abajo {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.btn-eliminar-seleccionados {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  color: var(--rojo);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-eliminar-seleccionados:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* --- Modales (edición y confirmación) --- */
 
 .modal-overlay {
   position: fixed;
@@ -363,4 +413,78 @@ body {
   padding: 9px 12px;
   font-family: 'Inter', sans-serif;
   font-size: 14px;
+}
+
+.modal-confirmacion {
+  max-width: 380px;
+}
+
+.modal-confirmacion-texto {
+  color: var(--texto-muted);
+  font-size: 14px;
+  line-height: 150%;
+}
+
+.btn-eliminar-confirmar {
+  background: var(--rojo);
+  color: var(--texto);
+  border: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-eliminar-confirmar:hover {
+  background: #dc2626;
+}
+
+/* --- Toast --- */
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--verde);
+  color: #f8fafc;
+  padding: 12px 20px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 200;
+  animation: toast-in 0.2s ease;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.toast-saliendo {
+  opacity: 0;
+  transform: translate(-50%, 10px);
+}
+
+.toast-deshacer {
+  background: transparent;
+  border: none;
+  color: white;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
 }
