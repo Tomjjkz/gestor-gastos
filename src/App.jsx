@@ -13,7 +13,11 @@ const CATEGORIAS = {
 }
 
 function App() {
-  
+  const [fechaEdit, setFechaEdit] = useState("")
+  const [categoriaEdit, setCategoriaEdit] = useState("Comida")
+  const [montoEdit, setMontoEdit] = useState("")
+  const [descripcionEdit, setDescripcionEdit] = useState("")
+  const [gastoEditando, setGastoEditando] = useState(null)
   const [gastos, setGastos] = useState([])
   const [fecha, setFecha] = useState("")
   const [descripcion, setDescripcion] = useState("")
@@ -44,7 +48,7 @@ function App() {
       setFecha("")
       setDescripcion("")
       setCategoria("Comida")
-    }
+    }  
   useEffect(() => {
     const traerGastos = async () => {
       const { data, error } = await supabase.from('gastos').select('*')
@@ -79,7 +83,14 @@ function App() {
     document.addEventListener('click', cerrarMenu)
     return () => document.removeEventListener('click', cerrarMenu)
   }, [menuAbierto])
-  
+  useEffect(() => {
+    if (gastoEditando) {
+      setFechaEdit(gastoEditando.fecha)
+      setCategoriaEdit(gastoEditando.categoria)
+      setDescripcionEdit(gastoEditando.descripcion)
+      setMontoEdit(gastoEditando.monto)
+    }
+  }, [gastoEditando])    
 
   return (
     <>
@@ -135,9 +146,11 @@ function App() {
         <p></p>
       </div>    
       {gastos.map((gasto) => (
-        <div key={gasto.id} 
+        <div 
+        key={gasto.id} 
         className='gasto'
         onMouseLeave={() => setMenuAbierto(null)}
+        onDoubleClick={() => setGastoEditando(gasto)}
         >
           <div className='celda-check'>
             {modoEdicion && (
@@ -186,7 +199,11 @@ function App() {
             </button>
             {menuAbierto === gasto.id && (
               <div className='menu-contextual'>
-                <button type='button' className='menu-item'>
+                <button 
+                  type='button' 
+                  className='menu-item'
+                  onClick={() => { setGastoEditando(gasto); setMenuAbierto(null) }}
+                >    
                   <Pencil size={15} /> Editar
                 </button>
                 <button
@@ -208,7 +225,54 @@ function App() {
           </div> 
         </div>
       ))}
-      </div>  
+      </div>
+    {gastoEditando && (
+      <div className='modal-overlay' onClick={() => setGastoEditando(null)}>
+        <div className='modal' onClick={(e) => e.stopPropagation()}>
+          <h2>Editar gasto</h2>
+          <div className='modal-campo'>
+            <label>Fecha</label>
+            <input
+              type="date"
+              value={fechaEdit}
+              onChange={(e) => setFechaEdit(e.target.value)}
+            />
+          </div>    
+          <div className='modal-campo'>
+            <label>Categoria</label>
+            <select value={categoriaEdit} onChange={(e) => setCategoriaEdit(e.target.value)}>
+              {Object.keys(CATEGORIAS).map((nombre) => (
+                <option key={nombre}>{nombre}</option>
+              ))}
+            </select>
+          </div>
+          <div className='modal-campo'>
+            <label>Descripción</label>
+            <input
+              type="text"
+              value={descripcionEdit}
+              onChange={(e) => setDescripcionEdit(e.target.value)}
+            />
+          </div>
+          <div className='modal-campo'>
+            <label>Monto</label>
+            <input
+              type="number"
+              value={montoEdit}
+              onChange={(e) => setMontoEdit(e.target.value)}
+            />
+          </div>      
+          <div className='modal-acciones'>
+            <button type='button' className='btn-cancelar' onClick={() => setGastoEditando(null)}>
+              Cancelar
+            </button>
+            <button type='button' className='btn-guardar'>
+              Guardar cambios
+            </button>
+           </div>
+          </div>
+         </div>       
+      )}         
     </>
   )
 }
