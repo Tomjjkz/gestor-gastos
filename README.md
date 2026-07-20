@@ -19,15 +19,19 @@ This project was built as a learning exercise and portfolio piece, focused on re
 ## Screenshots
 
 **Add expense form + summary**
+
 ![Form and summary](./screenshots/form.png)
 
 **Edit modal**
+
 ![Edit modal](./screenshots/edit-modal.png)
 
 **Delete confirmation**
+
 ![Delete confirmation](./screenshots/delete-confirmation.png)
 
 **Undo toast**
+
 ![Undo toast](./screenshots/undo-toast.png)
 
 ## Tech Stack
