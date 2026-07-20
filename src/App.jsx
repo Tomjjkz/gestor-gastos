@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import { supabase } from './supabaseClient'
-import { UtensilsCrossed, Car, Home, Gamepad2, Lightbulb, ShoppingCart, MoreVertical, Pencil, Copy, Trash2 } from 'lucide-react'
+import { UtensilsCrossed, Car, Home, Gamepad2, Lightbulb, ShoppingCart, MoreVertical, Pencil, Copy, Trash2, CalendarDays, Tags, FileText, DollarSign, Wallet, Plus } from 'lucide-react'
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 
 const CATEGORIAS = {
   Comida:      { color: '#F97316', Icono: UtensilsCrossed },
@@ -14,6 +15,7 @@ const CATEGORIAS = {
 const fechaDeHoy = () => new Date().toISOString().split('T')[0]
 
 function App() {
+  const [idEntrando, setIdEntrando] = useState(null)
   const filasRefs = useRef({})
   const [toastSaliendo, setToastSaliendo] = useState(false)
   const toastHideRef = useRef(null)
@@ -36,6 +38,19 @@ function App() {
     return acumulado + Number(gasto.monto)
   }, 0)
   const [menuAbierto, setMenuAbierto] = useState(null)
+
+  const gastosPorCategoria = Object.keys(CATEGORIAS)
+  .map((nombre) => {
+    const deEstaCategoria = gastos.filter((gasto) => gasto.categoria === nombre)
+    const montoTotal = deEstaCategoria.reduce((acc, gasto) => acc + Number(gasto.monto), 0)
+    return {
+      categoria: nombre,
+      monto: montoTotal,
+      color: CATEGORIAS[nombre].color,
+      Icono: CATEGORIAS[nombre].Icono,
+    }
+  })
+  .filter((item) => item.monto > 0)
 
   const iniciarSalidaFila = (id) => {
     const el = filasRefs.current[id]
@@ -135,22 +150,31 @@ function App() {
   }
 
   const agregarGasto = async () => {
-    if (monto === "" || descripcion === "" || fecha === "") {
-      return
-    }
-    const nuevoGasto = {
-      monto: monto,
-      categoria: categoria,
-      fecha: fecha,
-      descripcion: descripcion,
-    }
-    const { error } = await supabase.from('gastos').insert(nuevoGasto)
-    setGastos([...gastos, nuevoGasto])
-    setMonto("")
-    setFecha(fechaDeHoy())
-    setDescripcion("")
-    setCategoria("Comida")
+  if (monto === "" || descripcion === "" || fecha === "") {
+    return
   }
+  const nuevoGasto = {
+    monto: monto,
+    categoria: categoria,
+    fecha: fecha,
+    descripcion: descripcion,
+  }
+  const { data, error } = await supabase.from('gastos').insert(nuevoGasto).select()
+  const gastoInsertado = data[0]
+
+  setGastos([...gastos, gastoInsertado])
+  setIdEntrando(gastoInsertado.id)
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      setIdEntrando(null)
+    })
+  })
+
+  setMonto("")
+  setFecha(fechaDeHoy())
+  setDescripcion("")
+  setCategoria("Comida")
+}
 
   useEffect(() => {
     const traerGastos = async () => {
@@ -203,36 +227,126 @@ function App() {
   return (
     <>
       <div className='seccion'>
-        <h2>Nuevo gasto</h2>
+        <h2 className='titulo-seccion'><Wallet size={18} /> Nuevo gasto</h2>
         <form className='barra'>
-          <input
-            type="date"
-            value={fecha}
-            onChange={(e) => setFecha(e.target.value)}
-          />
-          <select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
-            {Object.keys(CATEGORIAS).map((nombre) => (
-              <option key={nombre}>{nombre}</option>
-            ))}
-          </select>
-          <input
-            type="text"
-            placeholder="Descripcion del gasto"
-            value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
-          />
-          <input
-            type="number"
-            placeholder="Ingrese el monto"
-            value={monto}
-            onChange={(e) => setMonto(e.target.value)}
-          />
-          <button type="button" onClick={agregarGasto}>Agregar gasto</button>
+          <div className='campo'>
+            <label className='campo-label'>Fecha</label>
+            <div className='campo-input'>
+              <CalendarDays size={16} className='campo-icono' />
+              <input
+                type="date"
+                value={fecha}
+                onChange={(e) => setFecha(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className='campo'>
+            <label className='campo-label'>Categoría</label>
+            <div className='campo-input'>
+              {(() => {
+                const IconoCat = CATEGORIAS[categoria].Icono
+                return <IconoCat size={16} className='campo-icono' style={{ color: CATEGORIAS[categoria].color }} />
+              })()}
+              <select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
+                {Object.keys(CATEGORIAS).map((nombre) => (
+                  <option key={nombre}>{nombre}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className='campo campo-crece'>
+            <label className='campo-label'>Descripción</label>
+            <div className='campo-input'>
+              <FileText size={16} className='campo-icono' />
+              <input
+                type="text"
+                placeholder="Descripción del gasto"
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className='campo'>
+            <label className='campo-label'>Monto</label>
+            <div className='campo-input'>
+              <DollarSign size={16} className='campo-icono' />
+              <input
+                type="number"
+                placeholder="Ingrese el monto"
+                value={monto}
+                onChange={(e) => setMonto(e.target.value)}
+              />
+            </div>
+          </div>
+          <button type="button" className='btn-agregar' onClick={agregarGasto}>
+            <Plus size={16} /> Agregar gasto
+          </button>
         </form>
       </div>
 
       <div className='seccion'>
-        <p className='total'>Total gastado: -${total}</p>
+        <div className='tarjeta-resumen'>
+          <div className='tarjeta-total'>
+            <div className='tarjeta-total-icono'>
+              <Wallet size={22} />
+            </div>
+            <div className='tarjeta-total-info'>
+              <span className='tarjeta-total-label'>Total gastado</span>
+              <span className='tarjeta-total-monto'>-${total}</span>
+              <span className='tarjeta-total-periodo'>Este mes</span>
+              <span className='tarjeta-total-cantidad'>
+                <FileText size={14} /> {gastos.length} gasto{gastos.length !== 1 ? 's' : ''} registrado{gastos.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+          </div>
+
+          {gastosPorCategoria.length > 0 && (
+            <>
+              <div className='dona-categorias'>
+                <ResponsiveContainer width={"100%"} height={"100%"}>
+                  <PieChart>
+                    <Pie
+                      data={gastosPorCategoria}
+                      dataKey='monto'
+                      nameKey='categoria'
+                      innerRadius={52}
+                      outerRadius={78}
+                      paddingAngle={2}
+                      stroke='none'
+                    >
+                      {gastosPorCategoria.map((item) => (
+                        <Cell key={item.categoria} fill={item.color} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className='dona-centro'>
+                  <span className='dona-centro-monto'>-${total}</span>
+                  <span className='dona-centro-label'>Total</span>
+                </div>
+              </div>
+
+              <div className='lista-categorias'>
+                {gastosPorCategoria.map((item) => {
+                  const Icono = item.Icono
+                  const porcentaje = Math.round((item.monto / total) * 100)
+                  return (
+                    <div key={item.categoria} className='lista-categorias-item'>
+                      <span className='lista-categorias-punto' style={{ background: item.color }} />
+                      <Icono size={14} style={{ color: item.color }} />
+                      <span className='lista-categorias-nombre'>{item.categoria}</span>
+                      <span className='lista-categorias-monto'>-${item.monto}</span>
+                      <span className='lista-categorias-porcentaje'>{porcentaje}%</span>
+                    </div>
+                  )
+                })}
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       <div className='seccion'>
@@ -240,18 +354,18 @@ function App() {
         <div className={`tabla-gastos ${seleccionados.length > 0 ? 'hay-seleccion' : ''}`}>
 
           <div className='encabezado'>
-            <input type='checkbox' disabled style={{ visibility: 'hidden' }} />
-            <p>📅 Fecha</p>
-            <p>🏷️ Categoría</p>
-            <p>📝 Descripción</p>
-            <p className='col-monto'>💰 Monto</p>
+            <input type='checkbox' disabled style={{visibility: 'hidden'}} />
+            <p><CalendarDays size={14} /> Fecha</p>
+            <p><Tags size={14} /> Categoría</p>
+            <p><FileText size={14} /> Descripción</p>
+            <p className='col-monto'><DollarSign size={14} /> Monto</p>
             <p></p>
           </div>
           {gastos.map((gasto) => (
             <div
               key={gasto.id}
               ref={(el) => { filasRefs.current[gasto.id] = el }}
-              className={`fila-wrapper ${idsSaliendo.includes(gasto.id) ? 'saliendo' : ''}`}
+              className={`fila-wrapper ${idsSaliendo.includes(gasto.id) ? 'saliendo' : ''} ${gasto.id === idEntrando ? 'entrando' : ''}`}
             >
               <div
                 className='gasto'

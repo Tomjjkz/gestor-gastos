@@ -2,8 +2,8 @@
 
 :root {
   --grid-gastos: 40px 110px minmax(0, 1.2fr) minmax(0, 2fr) minmax(0, 1fr) 40px;
-  --bg: #0F172A;
-  --panel: #1E293B;
+  --bg: #0B1120;
+  --panel: #131C2E;
   --accent: #3B82F6;
   --verde: #22C55E;
   --rojo: #EF4444;
@@ -23,52 +23,217 @@ body {
   margin: 0;
 }
 
+.titulo-seccion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.titulo-seccion svg {
+  color: var(--accent);
+}
+
 .barra {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  background: var(--panel);
-  padding: 16px 20px;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo-crece {
+  flex: 1;
+  min-width: 200px;
+}
+
+.campo-label {
+  font-size: 13px;
+  color: var(--texto-muted);
+}
+
+.campo-input {
+  position: relative;
+  display: flex;
   align-items: center;
 }
 
-.barra input,
-.barra select {
+.campo-icono {
+  position: absolute;
+  left: 12px;
+  color: var(--texto-muted);
+  pointer-events: none;
+}
+
+.campo-input input,
+.campo-input select {
+  width: 100%;
   background: var(--bg);
   color: var(--texto);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  padding: 8px 12px;
+  border-radius: 8px;
+  padding: 9px 12px 9px 36px;
   font-family: 'Inter', sans-serif;
   font-size: 14px;
 }
 
-.barra select,
-.barra input[type='date'] {
+.campo-input select,
+.campo-input input[type='date'] {
   cursor: pointer;
 }
 
-.barra button {
+.btn-agregar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   background: var(--accent);
   color: var(--texto);
   border: none;
-  border-radius: 6px;
-  padding: 8px 16px;
+  border-radius: 8px;
+  padding: 10px 16px;
   font-size: 14px;
   font-weight: 600;
+  font-family: 'Inter', sans-serif;
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
-.barra button:hover {
+.btn-agregar:hover {
   background: #2563eb;
 }
 
-.total {
+.tarjeta-total {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.tarjeta-total-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--rojo);
+  flex-shrink: 0;
+}
+
+.tarjeta-total-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tarjeta-total-label {
+  font-size: 13px;
+  color: var(--texto-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tarjeta-total-monto {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 20px;
+  font-size: 28px;
   font-weight: 700;
   color: var(--rojo);
+}
+
+.tarjeta-total-periodo {
+  font-size: 13px;
+  color: var(--texto-muted);
+  margin-top: 2px;
+}
+
+.tarjeta-total-cantidad {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--texto-muted);
+  margin-top: 10px;
+}
+
+.tarjeta-resumen {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.dona-categorias {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  flex-shrink: 0;
+}
+
+.dona-categorias:focus,
+.dona-categorias *:focus {
+  outline: none;
+}
+
+.dona-centro {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  pointer-events: none;
+  text-align: center;
+}
+
+.dona-centro-monto {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.dona-centro-label {
+  font-size: 11px;
+  color: var(--texto-muted);
+}
+
+.lista-categorias {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.lista-categorias-item {
+  display: grid;
+  grid-template-columns: 8px 16px 1fr 1fr 1fr;
+  align-items: center;
+  column-gap: 14px;
+  font-size: 14px;
+  color: var(--texto);
+}
+
+.lista-categorias-monto {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--rojo);
+  text-align: right;
+}
+
+.lista-categorias-porcentaje {
+  color: var(--texto-muted);
+  text-align: right;
+}
+
+.lista-categorias-punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .resumen {
@@ -115,8 +280,16 @@ body {
   margin-bottom: 8px;
 }
 
+.encabezado p {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+}
+
 .encabezado .col-monto {
   text-align: right;
+  justify-content: flex-end;
 }
 
 .badge {
@@ -169,6 +342,7 @@ body {
   padding: 14px 20px;
   width: 100%;
   transition: background 0.15s ease, opacity 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
 }
 
 .gasto:hover {
@@ -487,4 +661,16 @@ body {
     opacity: 1;
     transform: translate(-50%, 0);
   }
+}
+
+.fila-wrapper.entrando {
+  height: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  overflow: hidden;
+}
+
+.fila-wrapper.entrando > .gasto {
+  opacity: 0;
+  transform: translateY(-8px);
 }
