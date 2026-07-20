@@ -1,16 +1,73 @@
-# React + Vite
+# Expense Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A personal expense tracker built with React and Supabase, designed with a clean, modern dark UI inspired by Linear, Notion, and Vercel.
 
-Currently, two official plugins are available:
+This project was built as a learning exercise and portfolio piece, focused on real-world patterns: CRUD operations against a live database, optimistic UI, animated interactions, and thoughtful component design — all from scratch, without relying on a UI framework.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- **Add, edit, and delete expenses**, all persisted in a Supabase (PostgreSQL) database
+- **Category system** with custom colors and icons (Lucide React) for Food, Transport, Home, Leisure, Services, and Shopping
+- **Summary card** with a category breakdown donut chart (Recharts), total spent, and quick stats
+- **Multi-select** with bulk delete
+- **Context menu** per row (Edit / Duplicate / Delete)
+- **Delete confirmation modal** to prevent accidental data loss
+- **Undo toast** after deleting, with a 3-second window to restore
+- **Smooth enter/exit animations** for rows, using measured height transitions (no CSS hacks like `max-height` guessing)
+- **Fully responsive interactions**: hover reveals, animated checkboxes, and contextual menus
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Screenshots
 
-## Expanding the Oxlint configuration
+**Add expense form + summary**
+![Form and summary](./screenshots/form.png)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+**Edit modal**
+![Edit modal](./screenshots/edit-modal.png)
+
+**Delete confirmation**
+![Delete confirmation](./screenshots/delete-confirmation.png)
+
+**Undo toast**
+![Undo toast](./screenshots/undo-toast.png)
+
+## Tech Stack
+
+- **React** (Vite)
+- **Supabase** (PostgreSQL database, no auth — single-user app)
+- **Recharts** for the category donut chart
+- **Lucide React** for icons
+- Plain CSS (no framework), using CSS variables, CSS Grid, and custom animations
+
+## Live Demo
+
+Not deployed yet — coming soon.
+
+## Getting Started
+
+1. Clone the repo:
+
+git clone https://github.com/Tomjjkz/gestor-gastos.git
+cd gestor-gastos
+
+2. Install dependencies:
+
+npm install
+
+3. Create a `.env` file in the project root with your own Supabase credentials:
+
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+4. Run the dev server:
+
+npm run dev
+
+## Roadmap
+
+- Search and filter by category / date range
+- Monthly comparison stats (average per day, trend vs. previous month)
+- Deploy to Vercel
+
+## Author
+
+Built by [Tomás Bruno](https://github.com/Tomjjkz).
